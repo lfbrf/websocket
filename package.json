@@ -4,20 +4,26 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node -r dotenv/config index"
+    "server": " node -r dotenv/config server/index",
+    "client": " node -r dotenv/config client/index",
+    "cert": "node publicEncrypt.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.26.1",
     "cors": "^2.8.5",
     "cryptico": "^1.0.2",
+    "crypto-js": "^4.1.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "helmet": "^4.6.0",
-    "https": "^1.0.0",
     "io": "^1.0.4",
     "morgan": "^1.10.0",
+    "phin": "^3.6.1",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6",
     "socket.io": "^4.4.1",
     "ws": "^7.5.3"
   }
