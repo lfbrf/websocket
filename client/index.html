@@ -7,39 +7,47 @@
 </head>
 <body>
 </body>
-<script>
-const params = new URL(window.location.href).searchParams;
-const ws = new WebSocket('ws://localhost:3000?' + params.get('aesKey'));
-
-ws.onopen = function() {
-    console.log(encrypt('WebSocket'));
-    ws.send(encrypt('WebSocket'));
-};
-
-ws.onmessage = function(e) { 
-  console.log("Received: '" + e.data + "'");
-};
-
-function readStringFromFileAtPath(pathOfFileToReadFrom){
-        var request = new XMLHttpRequest();
-        request.open("GET", pathOfFileToReadFrom, false);
-        request.send(null);
-        var returnValue = request.responseText;
-
-        return returnValue;
-}
-
-function encrypt(data) {
-  if (!data) return null
-    try {
-      return CryptoJS.AES.encrypt(data, CryptoJS.enc.Utf8.parse("NdRgUkXp2s5v8y/A"), {
-             mode: CryptoJS.mode.ECB,
-              padding: CryptoJS.pad.Pkcs7
-        }).toString();
-    } catch {
-         return null
-    }
-}
-
-</script>
 </html>
+<script>
+  const ws = new WebSocket('ws://localhost:3000?');
+  
+  ws.onmessage = function(e) { 
+    const dataParsed = JSON.parse(e.data);
+  if(hasAlreadySentKeyAndAesAndNotSendHellos(dataParsed)){
+      const encryptePrivatedKey =  encrypt('hello', dataParsed.aes);
+      dataParsed.hello = encryptePrivatedKey;
+      console.log('Hello encrypted with AES Key: ', encryptePrivatedKey);
+      ws.send(JSON.stringify(dataParsed));
+  }  
+    console.log(dataParsed);
+  };
+  
+  function hasAlreadySentKeyAndAesAndNotSendHellos(dataParsed){
+    return dataParsed.key && dataParsed.aes && !dataParsed.hello && !dataParsed.helloTyT;
+  }
+  
+  ws.onopen = function() {
+      ws.send(JSON.stringify({
+      "key": httpGet('http://localhost:3050/')
+  }));
+  };
+  
+  function encrypt(data, key) {
+      try {
+        return CryptoJS.AES.encrypt(data, CryptoJS.enc.Utf8.parse(key), {
+               mode: CryptoJS.mode.ECB,
+                padding: CryptoJS.pad.Pkcs7
+          }).toString();
+      } catch {
+           return null
+      }
+  }
+  
+  function httpGet(theUrl){
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.open( "GET", theUrl, false ); 
+      xmlHttp.send( null );
+      return xmlHttp.responseText;
+  }
+  
+  </script>
