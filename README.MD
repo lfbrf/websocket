@@ -5,5 +5,4 @@
 ### npm run client
 ## Run client server (in a new terminal window)
 ### npm run server
-## socket will be open on wss://localhost:3000/
 ## Any questions please contact me luizfelipebasile@gmail.com or https://www.linkedin.com/in/luiz-felipe-ribeiro-filho/
