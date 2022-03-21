@@ -1,6 +1,7 @@
 const WebSocket = require('ws');
 const { encrypt } = require('cryptico');
 const crpto = require('./../utils/crypto');
+var microtime = require('microtime');
 function onError(ws, err) {
     console.error(`onError: ${err.message}`);
 }
@@ -51,7 +52,7 @@ function logMessageHello(helloTyT, dataParsed){
 }
 
 function sendMessageWithEncryptPrivateKey(ws, dataParsed, privateKeyDecrypted){
-    const aes = crpto.encryptAes(privateKeyDecrypted, process.env.SECRET_KEY);
+    const aes = crpto.encryptAes(privateKeyDecrypted + microtime.now(), process.env.SECRET_KEY);
     dataParsed.aes = aes;
     ws.send(JSON.stringify(dataParsed));
     logMessagePrivateKey(privateKeyDecrypted, aes);
@@ -61,7 +62,6 @@ function logMessagePrivateKey(privateKeyDecrypted, aes){
     console.log('AES Key encrypted with private key', privateKeyDecrypted + '\n');
     console.log('Websocket Password Encrypted with public key: ', aes + '\n');  
 }
-
 function closeSocketIfInvalidPrivateKey(ws, key){
     privateKeyDecrypted = crpto.decryptPrivate(key);
     if(privateKeyDecrypted != process.env.SECRET_KEY){
